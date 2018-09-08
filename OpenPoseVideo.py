@@ -16,10 +16,10 @@ elif MODE is "MPI" :
     nPoints = 15
     POSE_PAIRS = [[0,1], [1,2], [2,3], [3,4], [1,5], [5,6], [6,7], [1,14], [14,8], [8,9], [9,10], [14,11], [11,12], [12,13] ]
 
+
 '''
 Nose – 0, Neck – 1, Right Shoulder – 2, Right Elbow – 3, Right Wrist – 4,
-Left Shoulder – 5, Left Elbow – 6, Left Wrist – 7, Right Hip – 8,
-Right Knee – 9, Right Ankle – 10, Left Hip – 11, Left Knee – 12,
+Left Shoulder – 5, Left Elbow – 6, Left Wrist – 7, Right Hip – 8, Right Knee – 9, Right Ankle – 10, Left Hip – 11, Left Knee – 12,
 LAnkle – 13, Right Eye – 14, Left Eye – 15, Right Ear – 16,
 Left Ear – 17, Background – 18
 '''
@@ -27,7 +27,7 @@ Left Ear – 17, Background – 18
 KEYPOINTS = {}
 
 
-VIEW = 'side'
+VIEW = 'front'
 need = []
 if (VIEW == 'side'):
     need = {0 : 'NOSE', 1: 'NECK', 11 : 'LH', 12 : 'LK' ,13 : 'LA' }
@@ -37,25 +37,41 @@ else:
     need = {1 : 'NECK',2 : 'RH' ,3: 'RE' ,4 : 'RW' ,5 : 'LS' ,6 : 'LE' ,7 : 'LW'} 
 
 
+
 inWidth = 368
 inHeight = 368
 threshold = 0.3
 
+neckMinY = 1000000
+neckMaxY = 0
 
-input_source = "side.mp4"
+neckMinYArray = []
+neckMaxYArray = []
+
+neckMaxYImg = None
+neckMaxYCheck = False
+maxFrame = None
+minFrame = None
+
+input_source = "front.mp4"
 cap = cv2.VideoCapture(input_source)
 hasFrame, frame = cap.read()
 
 vid_writer = cv2.VideoWriter('output.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (frame.shape[1],frame.shape[0]))
 
 net = cv2.dnn.readNetFromCaffe(protoFile, weightsFile)
-
+count = 0
 while hasFrame:
     t = time.time()
+    
+    print(count)
+    count +=1
+    
     hasFrame, frame = cap.read()
     frameCopy = np.copy(frame)
     if not hasFrame:
-        return
+        break
+
 
     frameWidth = frame.shape[1]
     frameHeight = frame.shape[0]
@@ -69,8 +85,10 @@ while hasFrame:
     W = output.shape[3]
     # Empty list to store the detected keypoints
     points = []
-
+    isMax = False
+    isMin = False
     for i in range(nPoints):
+
         # confidence map of corresponding body's part.
         probMap = output[0, i, :, :]
 
@@ -82,7 +100,7 @@ while hasFrame:
         y = (frameHeight * point[1]) / H
 
         if prob > threshold :
-            if(i in need): 
+            if(i in need.keys()): 
                 cv2.circle(frameCopy, (int(x), int(y)), 8, (0, 255, 255), thickness=-1, lineType=cv2.FILLED)
                 cv2.putText(frameCopy, "{}".format(i), (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, lineType=cv2.LINE_AA)
 
@@ -92,6 +110,19 @@ while hasFrame:
                 points.append(None)
         else :
             points.append(None)
+        if i == 1:
+            if y > neckMaxY:
+                isMax = True
+            elif y < neckMinY:
+                isMin = True
+
+    if (isMax  == True):
+        neckMaxYArray = points
+        maxFrame = frameCopy
+    if (isMin == True):
+        neckMinYArray = points
+        minFrame = frameCopy
+
 
     # Draw Skeleton
     for pair in POSE_PAIRS:
@@ -103,11 +134,26 @@ while hasFrame:
             cv2.circle(frame, points[partA], 8, (0, 0, 255), thickness=-1, lineType=cv2.FILLED)
             cv2.circle(frame, points[partB], 8, (0, 0, 255), thickness=-1, lineType=cv2.FILLED)
 
+
     cv2.putText(frame, "time taken = {:.2f} sec".format(time.time() - t), (50, 50), cv2.FONT_HERSHEY_COMPLEX, .8, (255, 50, 0), 2, lineType=cv2.LINE_AA)
     # cv2.putText(frame, "OpenPose using OpenCV", (50, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 50, 0), 2, lineType=cv2.LINE_AA)
     # cv2.imshow('Output-Keypoints', frameCopy)
-    cv2.imshow('Output-Skeleton', frame)
+    # cv2.imshow('Output-Skeleton', frame)
 
-    vid_writer.write(frameCopy)
+cv2.imshow('OutputMax', maxFrame)
+cv2.imshow('OutputMin', minFrame)
 
 vid_writer.release()
+print(neckMaxYArray)
+print(neckMinYArray)
+
+
+# for pair in POSE_PAIRS:
+#     partA = pair[0]
+#     partB = pair[1]
+
+#     if points[partA] and points[partB]:
+#         cv2.line(neckMaxYImg, points[partA], points[partB], (0, 255, 255), 3, lineType=cv2.LINE_AA)
+#         cv2.circle(neckMaxYImg, points[partA], 8, (0, 0, 255), thickness=-1, lineType=cv2.FILLED)
+#         cv2.circle(neckMaxYImg, points[partB], 8, (0, 0, 255), thickness=-1, lineType=cv2.FILLED)
+#         cv2.imwrite('muhjaypeg.jpg', neckMaxYImg)
