@@ -16,13 +16,33 @@ elif MODE is "MPI" :
     nPoints = 15
     POSE_PAIRS = [[0,1], [1,2], [2,3], [3,4], [1,5], [5,6], [6,7], [1,14], [14,8], [8,9], [9,10], [14,11], [11,12], [12,13] ]
 
-need = [0, 1, 11, 12,13 ]
+'''
+Nose – 0, Neck – 1, Right Shoulder – 2, Right Elbow – 3, Right Wrist – 4,
+Left Shoulder – 5, Left Elbow – 6, Left Wrist – 7, Right Hip – 8,
+Right Knee – 9, Right Ankle – 10, Left Hip – 11, Left Knee – 12,
+LAnkle – 13, Right Eye – 14, Left Eye – 15, Right Ear – 16,
+Left Ear – 17, Background – 18
+'''
+
+KEYPOINTS = {}
+
+
+VIEW = 'side'
+need = []
+if (VIEW == 'side'):
+    need = {0 : 'NOSE', 1: 'NECK', 11 : 'LH', 12 : 'LK' ,13 : 'LA' }
+
+
+else:
+    need = {1 : 'NECK',2 : 'RH' ,3: 'RE' ,4 : 'RW' ,5 : 'LS' ,6 : 'LE' ,7 : 'LW'} 
+
+
 inWidth = 368
 inHeight = 368
-threshold = 0.4
+threshold = 0.3
 
 
-input_source = "sample2.mp4"
+input_source = "side.mp4"
 cap = cv2.VideoCapture(input_source)
 hasFrame, frame = cap.read()
 
@@ -30,13 +50,12 @@ vid_writer = cv2.VideoWriter('output.avi',cv2.VideoWriter_fourcc('M','J','P','G'
 
 net = cv2.dnn.readNetFromCaffe(protoFile, weightsFile)
 
-while cv2.waitKey(1) < 0:
+while hasFrame:
     t = time.time()
     hasFrame, frame = cap.read()
     frameCopy = np.copy(frame)
     if not hasFrame:
-        cv2.waitKey()
-        break
+        return
 
     frameWidth = frame.shape[1]
     frameHeight = frame.shape[0]

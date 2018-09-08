@@ -3,8 +3,9 @@ vidcap = cv2.VideoCapture('sample3.mp4')
 success,image = vidcap.read()
 count = 0
 while success:
-  if (count > 50):
-  	cv2.imwrite("frames/frame%d.jpg" % count, image)     # save frame as JPEG file      
+  if (count < 10):
+  	print("writing")
+  	cv2.imwrite("frame%d.jpg" % count, image)     # save frame as JPEG file      
   success,image = vidcap.read()
-  print('Read a new frame: ', success)
+  print('Read a new frame: ', success, 0)
   count += 1
