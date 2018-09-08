@@ -11,16 +11,24 @@ if MODE is "COCO":
     POSE_PAIRS = [ [1,0],[1,2],[1,5],[2,3],[3,4],[5,6],[6,7],[1,8],[8,9],[9,10],[1,11],[11,12],[12,13],[0,14],[0,15],[14,16],[15,17]]
 
 elif MODE is "MPI" :
-    protoFile = "pose/mpi/pose_deploy_linevec_faster_4_stages.prototxt"
-    weightsFile = "pose/mpi/pose_iter_160000.caffemodel"
+    protoFile = "/Users/youngyona/PycharmProjects/technique/pose/mpi/pose_deploy_linevec_faster_4_stages.prototxt"
+    weightsFile = "/Users/youngyona/PycharmProjects/technique/pose/mpi/pose_iter_160000.caffemodel"
     nPoints = 15
     POSE_PAIRS = [[0,1], [1,2], [2,3], [3,4], [1,5], [5,6], [6,7], [1,14], [14,8], [8,9], [9,10], [14,11], [11,12], [12,13] ]
 
-need = [0, 1, 11, 12,13 ]
+need = [0, 1, 11, 12,13]
 inWidth = 368
 inHeight = 368
 threshold = 0.4
 
+neckMinY = 1000000
+neckMaxY = 0
+
+neckMinYArray = []
+neckMaxYArray = []
+
+neckMaxYImg = None
+neckMaxYCheck = False
 
 input_source = "sample2.mp4"
 cap = cv2.VideoCapture(input_source)
@@ -30,12 +38,11 @@ vid_writer = cv2.VideoWriter('output.avi',cv2.VideoWriter_fourcc('M','J','P','G'
 
 net = cv2.dnn.readNetFromCaffe(protoFile, weightsFile)
 
-while cv2.waitKey(1) < 0:
+while hasFrame:
     t = time.time()
     hasFrame, frame = cap.read()
     frameCopy = np.copy(frame)
     if not hasFrame:
-        cv2.waitKey()
         break
 
     frameWidth = frame.shape[1]
@@ -52,6 +59,7 @@ while cv2.waitKey(1) < 0:
     points = []
 
     for i in range(nPoints):
+
         # confidence map of corresponding body's part.
         probMap = output[0, i, :, :]
 
@@ -73,6 +81,13 @@ while cv2.waitKey(1) < 0:
                 points.append(None)
         else :
             points.append(None)
+        if i == 1:
+            if y > neckMaxY:
+                neckMaxYArray = points
+            elif y < neckMinY:
+                neckMinYArray = points
+
+
 
     # Draw Skeleton
     for pair in POSE_PAIRS:
@@ -84,11 +99,24 @@ while cv2.waitKey(1) < 0:
             cv2.circle(frame, points[partA], 8, (0, 0, 255), thickness=-1, lineType=cv2.FILLED)
             cv2.circle(frame, points[partB], 8, (0, 0, 255), thickness=-1, lineType=cv2.FILLED)
 
+
     cv2.putText(frame, "time taken = {:.2f} sec".format(time.time() - t), (50, 50), cv2.FONT_HERSHEY_COMPLEX, .8, (255, 50, 0), 2, lineType=cv2.LINE_AA)
     # cv2.putText(frame, "OpenPose using OpenCV", (50, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 50, 0), 2, lineType=cv2.LINE_AA)
     # cv2.imshow('Output-Keypoints', frameCopy)
     cv2.imshow('Output-Skeleton', frame)
-
     vid_writer.write(frameCopy)
 
 vid_writer.release()
+print(neckMaxYArray)
+print(neckMinYArray)
+
+
+for pair in POSE_PAIRS:
+    partA = pair[0]
+    partB = pair[1]
+
+    if points[partA] and points[partB]:
+        cv2.line(neckMaxYImg, points[partA], points[partB], (0, 255, 255), 3, lineType=cv2.LINE_AA)
+        cv2.circle(neckMaxYImg, points[partA], 8, (0, 0, 255), thickness=-1, lineType=cv2.FILLED)
+        cv2.circle(neckMaxYImg, points[partB], 8, (0, 0, 255), thickness=-1, lineType=cv2.FILLED)
+        cv2.imwrite('muhjaypeg.jpg', neckMaxYImg)
