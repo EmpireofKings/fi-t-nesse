@@ -14,11 +14,27 @@ import math
 #a = ankle
 ########################
 
+
+low_pos = {
+
+        'n' :  (960, 680),
+        'sr' :(834, 610),
+        'er': (751, 563), 
+        'wr' : (751, 704), 
+        'sl' :(1043, 610),
+        'el': (1168, 563),
+        'wl': (1126, 704)
+        
+}
+
+
+
 class Scoring(object):
     
     def __init__(self, dic) :
+
         
-        self.sl = dic['sl']
+        self.sl = dic.get('sl')
         self.sr = dic['sr']
         self.el = dic['el']
         self.er = dic['er']
@@ -139,6 +155,7 @@ class Scoring(object):
         return score >= threshold
 
     
+if __name__ == '__main__':    
     
-    
-    
+    score = Scoring(low_pos)   
+    print(score.correctFrontDOWN())

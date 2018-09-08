@@ -42,8 +42,8 @@ inWidth = 368
 inHeight = 368
 threshold = 0.3
 
-neckMinY = 1000000
 neckMaxY = 0
+neckMinY = 1000000
 
 neckMinYArray = []
 neckMaxYArray = []
@@ -113,7 +113,9 @@ while hasFrame:
         if i == 1:
             if y > neckMaxY:
                 isMax = True
-            if y < neckMinY:
+                neckMaxY = y
+            elif y < neckMinY:
+                neckMinY = y
                 isMin = True
 
     if (isMax  == True):
@@ -121,7 +123,7 @@ while hasFrame:
         maxFrame = frameCopy
     if (isMin == True):
         neckMinYArray = points
-        minFrame = frameCopy
+    minFrame = frameCopy
 
 
     # # Draw Skeleton
