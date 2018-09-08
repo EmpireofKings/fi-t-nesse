@@ -113,7 +113,7 @@ while hasFrame:
         if i == 1:
             if y > neckMaxY:
                 isMax = True
-            elif y < neckMinY:
+            if y < neckMinY:
                 isMin = True
 
     if (isMax  == True):
@@ -124,24 +124,24 @@ while hasFrame:
         minFrame = frameCopy
 
 
-    # Draw Skeleton
-    for pair in POSE_PAIRS:
-        partA = pair[0]
-        partB = pair[1]
+    # # Draw Skeleton
+    # for pair in POSE_PAIRS:
+    #     partA = pair[0]
+    #     partB = pair[1]
 
-        if points[partA] and points[partB]:
-            cv2.line(frame, points[partA], points[partB], (0, 255, 255), 3, lineType=cv2.LINE_AA)
-            cv2.circle(frame, points[partA], 8, (0, 0, 255), thickness=-1, lineType=cv2.FILLED)
-            cv2.circle(frame, points[partB], 8, (0, 0, 255), thickness=-1, lineType=cv2.FILLED)
+    #     if points[partA] and points[partB]:
+    #         cv2.line(frame, points[partA], points[partB], (0, 255, 255), 3, lineType=cv2.LINE_AA)
+    #         cv2.circle(frame, points[partA], 8, (0, 0, 255), thickness=-1, lineType=cv2.FILLED)
+    #         cv2.circle(frame, points[partB], 8, (0, 0, 255), thickness=-1, lineType=cv2.FILLED)
 
 
-    cv2.putText(frame, "time taken = {:.2f} sec".format(time.time() - t), (50, 50), cv2.FONT_HERSHEY_COMPLEX, .8, (255, 50, 0), 2, lineType=cv2.LINE_AA)
+    # cv2.putText(frame, "time taken = {:.2f} sec".format(time.time() - t), (50, 50), cv2.FONT_HERSHEY_COMPLEX, .8, (255, 50, 0), 2, lineType=cv2.LINE_AA)
     # cv2.putText(frame, "OpenPose using OpenCV", (50, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 50, 0), 2, lineType=cv2.LINE_AA)
     # cv2.imshow('Output-Keypoints', frameCopy)
     # cv2.imshow('Output-Skeleton', frame)
 
-cv2.imshow('OutputMax', maxFrame)
-cv2.imshow('OutputMin', minFrame)
+cv2.imwrite('OutputMax.jpg', maxFrame)
+cv2.imwrite('OutputMin.jpg', minFrame)
 
 vid_writer.release()
 print(neckMaxYArray)

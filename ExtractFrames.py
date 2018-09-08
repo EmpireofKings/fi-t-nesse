@@ -2,6 +2,9 @@ import cv2
 vidcap = cv2.VideoCapture('sample3.mp4')
 success,image = vidcap.read()
 count = 0
+length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+
 while success:
   if (count < 10):
   	print("writing")
