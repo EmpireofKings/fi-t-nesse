@@ -30,16 +30,14 @@ class Scoring(object):
         self.a = dic['a']
         
     
-    def dist(tup1, tup2) :
-        (x1, y1) = tup1
-        (x2, y2) = tup2
+    def dist(self,x1,y1,x2,y2) :
+
         return math.sqrt((x1-x2)**2 + (y1-y2)**2)
     
     
-    def slope(tup1, tup2) :
-        (x1, y1) = tup1
-        (x2, y2) = tup2
-        if x1 = x2 : 
+    def slope(self,x1,y1,x2,y2) :
+
+        if x1 == x2 : 
             return None
         return ((y1-y2)/(x1-x2))
                 
@@ -50,18 +48,18 @@ class Scoring(object):
         (slx, sly) = self.sl
         (srx, sry) = self.sr
         (elx, ely) = self.el
-        (hlx, hly) = self.hl        
+        (hlx, hly) = self.wl        
         (erx, ery) = self.er
-        (hrx, hry) = self.hr
+        (hrx, hry) = self.wr
 
         score = 0
-        if abs(slope((elx, ely), (hlx, hly))) > 2 :
+        if abs(self.slope(elx, ely, hlx, hly)) > 2 :
             score += 50
-        if abs(slope((erx, ery), (hrx, hry))) > 2 :
+        if abs(self.slope(erx, ery, hrx, hry)) > 2 :
             score += 50
-        if (dist((slx, sly), (elx, ely)) <= (0.7)*dist((elx, ely), (hlx, hly))) :
+        if (self.dist(slx, sly, elx, ely) <= (0.7)*self.dist(elx, ely, hlx, hly)) :
             score += 10
-        if (dist((srx, sry), (erx, ery)) <= (0.7)*dist((erx, ery), (hrx, hry))) :
+        if (self.dist(srx, sry, erx, ery) <= (0.7)*self.dist(erx, ery, hrx, hry)) :
             score += 10
         return (score >= threshold)
         
@@ -70,17 +68,17 @@ class Scoring(object):
         (slx, sly) = self.sl
         (srx, sry) = self.sr
         (elx, ely) = self.el
-        (hlx, hly) = self.hl        
+        (hlx, hly) = self.wl        
         (erx, ery) = self.er
-        (hrx, hry) = self.hr
+        (hrx, hry) = self.wr
         score = 0
-        if abs(slope((elx, ely), (slx, sly))) > 80 :
+        if abs(self.slope(elx, ely, slx, sly)) > 80 :
             score += 50
-        if abs(slope((erx, ery), (srx, sry))) > 80 :
+        if abs(self.slope(erx, ery, srx, sry)) > 80 :
             score += 50
-        if abs(slope((elx, ely), (hlx, hly))) > 80 :
+        if abs(self.slope(elx, ely, hlx, hly)) > 80 :
             score += 50
-        if abs(slope((erx, ery), (hrx, hry))) > 80 :
+        if abs(self.slope(erx, ery, hrx, hry)) > 80 :
             score += 50
         return (score >= threshold)
     
@@ -94,10 +92,10 @@ class Scoring(object):
         (hx, hy) = self.h
         (kx, ky) = self.k
         (ax, ay) = self.a    
-
-        m1 = slope((nx, ny), (hx, hy))
-        m2 = slope((hx, hy), (kx, ky))
-        m3 = slope((kx, ky), (ax, ay))
+        score = 0
+        m1 = self.slope(nx, ny, hx, hy)
+        m2 = self.slope(hx, hy, kx, ky)
+        m3 = self.slope(kx, ky, ax, ay)
         if abs(m1) <= 0.18 :
             score += 20
         if abs(m2) <= 0.18 :
@@ -116,9 +114,10 @@ class Scoring(object):
         (hx, hy) = self.h
         (kx, ky) = self.k
         (ax, ay) = self.a
-        m1 = slope((nx, ny), (hx, hy))
-        m2 = slope((hx, hy), (kx, ky))
-        m3 = slope((kx, ky), (ax, ay))
+        score = 0
+        m1 = self.slope(nx, ny,hx, hy)
+        m2 = self.slope(hx, hy,kx, ky)
+        m3 = self.slope(kx, ky,ax, ay)
         if (math.tan(math.pi / 12)) <= abs(m1) <= (math.tan(25*math.pi/180)) : 
             score += 20
         if (math.tan(math.pi / 12)) <= abs(m2) <= (math.tan(25*math.pi/180)) : 
