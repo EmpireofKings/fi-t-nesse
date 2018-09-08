@@ -35,15 +35,15 @@ class Scoring(object):
 
         
         self.sl = dic.get('sl')
-        self.sr = dic['sr']
-        self.el = dic['el']
-        self.er = dic['er']
-        self.wl = dic['wl']
-        self.wr = dic['wr']
-        self.n = dic['n']
-        self.h = dic['h']
-        self.k = dic['k']
-        self.a = dic['a']
+        self.sr = dic.get('sr')
+        self.el = dic.get('el')
+        self.er = dic.get('er')
+        self.wl = dic.get('wl')
+        self.wr = dic.get('wr')
+        self.n = dic.get('n')
+        self.h = dic.get('h')
+        self.k = dic.get('k')
+        self.a = dic.get('a')
         
     
     def dist(self,x1,y1,x2,y2) :
@@ -60,7 +60,7 @@ class Scoring(object):
     #sl = shoulder left
     #el = elbow left
     #hl = hand left
-    def correctFrontDOWN(self, threshold = 100) :
+    def correctFrontDOWN(self, threshold = 90) :
         (slx, sly) = self.sl
         (srx, sry) = self.sr
         (elx, ely) = self.el
@@ -70,12 +70,12 @@ class Scoring(object):
 
         score = 0
         if (not isinstance(self.slope(elx, ely, hlx, hly), int)) or abs(self.slope(elx, ely, hlx, hly)) > 2 :
-            score += 50
+            score += 40
         if (not isinstance(self.slope(erx, ery, hrx, hry), int)) or abs(self.slope(erx, ery, hrx, hry)) > 2 :
-            score += 50
-        if (self.dist(slx, sly, elx, ely) <= (0.7)*self.dist(elx, ely, hlx, hly)) :
+            score += 40
+        if (self.dist(slx, sly, elx, ely) <= (0.3)*self.dist(elx, ely, hlx, hly)) :
             score += 10
-        if (self.dist(srx, sry, erx, ery) <= (0.7)*self.dist(erx, ery, hrx, hry)) :
+        if (self.dist(srx, sry, erx, ery) <= (0.3)*self.dist(erx, ery, hrx, hry)) :
             score += 10
         return (score >= threshold)
         
