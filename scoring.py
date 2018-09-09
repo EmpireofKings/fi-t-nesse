@@ -51,7 +51,7 @@ class Scoring(object):
 
 
         #elbows tucked in
-        if ((not isinstance(self.slope(lex, ley, lwx, lwy), int)) or (abs(self.slope(lex, ley, lwx, lwy)) > 5) ) and ((not isinstance(self.slope(rex, rey, rwx, rwy), int)) or (abs(self.slope(rex, rey, rwx, rwy)) > 5) ):
+        if ((self.slope(lex, ley, lwx, lwy) == None) or (abs(self.slope(lex, ley, lwx, lwy)) > 5) ) and (((self.slope(rex, rey, rwx, rwy) == None)) or (abs(self.slope(rex, rey, rwx, rwy)) > 5) ):
             score += 40
 
         else :
@@ -82,7 +82,7 @@ class Scoring(object):
         score = 0
         errors = dict()
         
-        if ((not isinstance(self.slope(lex, ley, lsx, lsy), int)) or abs(self.slope(lex, ley, lsx, lsy)) > 4) and ((not isinstance(self.slope(rex, rey, rsx, rsy), int)) or abs(self.slope(rex, rey, rsx, rsy)) > 4) :
+        if ((self.slope(lex, ley, lsx, lsy) == None) or abs(self.slope(lex, ley, lsx, lsy)) > 4) and ((self.slope(rex, rey, rsx, rsy) == None) or abs(self.slope(rex, rey, rsx, rsy)) > 4) :
             score += 50
 
         else :
@@ -91,7 +91,7 @@ class Scoring(object):
             errors['LS'] = self.frontUp['LS']
             errors['RS'] = self.frontUp['RS']
 
-        if ((not isinstance(self.slope(lex, ley, lwx, lwy), int)) or abs(self.slope(lex, ley, lwx, lwy)) > 4) and ((not isinstance(self.slope(rex, rey, rwx, rwy), int)) or abs(self.slope(rex, rey, rwx, rwy)) > 4) :
+        if ((self.slope(lex, ley, lwx, lwy) == None) or abs(self.slope(lex, ley, lwx, lwy)) > 4) and ((self.slope(rex, rey, rwx, rwy) == None) or abs(self.slope(rex, rey, rwx, rwy)) > 4) :
             score += 50
         else :
             errors['LE'] = self.frontUp['LE']
@@ -122,9 +122,9 @@ class Scoring(object):
         m2 = self.slope(hx, hy, kx, ky)
         m3 = self.slope(kx, ky, ax, ay)
         
-        if not (isinstance(m1, int) and isinstance(m2, int) and isinstance(m3, int)) : 
-            return {'hasErrors' : True, 'score' : 0, 'points' : {'N' : self.sideDown['N'], 'LS' : self.sideDown['LS'], 
-            'LH' : self.sideDown['LH'], 'LK' : self.sideDown['LK'], 'LA' : self.sideDown['LA']}}
+        # if not (isinstance(m1, int) and isinstance(m2, int) and isinstance(m3, int)) : 
+        #     return {'hasErrors' : True, 'score' : 0, 'points' : {'N' : self.sideDown['N'], 'LS' : self.sideDown['LS'], 
+        #     'LH' : self.sideDown['LH'], 'LK' : self.sideDown['LK'], 'LA' : self.sideDown['LA']}}
         
         if abs(m1) <= 0.18 :
             score += 20
@@ -169,9 +169,9 @@ class Scoring(object):
         m2 = self.slope(hx, hy, kx, ky)
         m3 = self.slope(kx, ky, ax, ay)    
 
-        if not (isinstance(m1, int) and isinstance(m2, int) and isinstance(m3, int)) :
-            return {'hasErrors' : True, 'score' : 0, 'points' : {'N' : self.sideUp['N'], 'LS' : self.sideUp['LS'], 
-                    'LH' : self.sideUp['LH'], 'LK' : self.sideUp['LK'], 'LA' : self.sideUp['LA']}}
+        # if not (isinstance(m1, int) and isinstance(m2, int) and isinstance(m3, int)) :
+        #     return {'hasErrors' : True, 'score' : 0, 'points' : {'N' : self.sideUp['N'], 'LS' : self.sideUp['LS'], 
+        #             'LH' : self.sideUp['LH'], 'LK' : self.sideUp['LK'], 'LA' : self.sideUp['LA']}}
 
         
         if (math.tan(math.pi / 12)) <= abs(m1) <= (math.tan(25*math.pi/180)) : 
