@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 from flask import send_from_directory
 from flask_socketio import SocketIO, send, emit
 
+<<<<<<< HEAD
 UPLOAD_FOLDER = '/Users/youngyona/PycharmProjects/technique/tmp'
 ALLOWED_EXTENSIONS = set(['mp4'])
 
