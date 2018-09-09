@@ -58,8 +58,7 @@ def upload_file():
         if side and allowed_file(side.filename):
             side.filename = "side.mp4"
             side.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(side.filename)))
-            # return redirect(url_for('uploaded_file',
-            #                         filename=filename_side))
+            return redirect(url_for('process'))
 
     return render_template('home.html')
 
@@ -73,7 +72,6 @@ def upload_file():
 @app.route('/process', methods=['GET', 'POST'])
 def process():
     if state == 0:
-
         return render_template('process.html')
     else:
         return render_template('results.html')
