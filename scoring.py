@@ -38,7 +38,7 @@ class Scoring(object):
         return ((y1-y2)/(x1-x2))
                 
 
-    def correctFrontDOWN(self, threshold = 100) :
+    def correctFrontDOWN(self, threshold = 70) :
         (lsx, lsy) = self.frontDown['LS']
         (rsx, rsy) = self.frontDown['RS']
         (lex, ley) = self.frontDown['LE']
@@ -84,7 +84,7 @@ class Scoring(object):
 
         return {'hasErrors' : False, 'score' : score}
         
-    def correctFrontUP(self, threshold = 100) :
+    def correctFrontUP(self, threshold = 70) :
         (lsx, lsy) = self.frontUp['LS']
         (rsx, rsy) = self.frontUp['RS']
         (lex, ley) = self.frontUp['LE']
@@ -126,7 +126,7 @@ class Scoring(object):
     #h = hip
     #k = knee
     #a = ankle
-    def correctSideDOWN(self, threshold = 80) :
+    def correctSideDOWN(self, threshold = 70) :
         (nx, ny) = self.sideDown['N']
         (sx, sy) = self.sideDown['LS']
         (hx, hy) = self.sideDown['LH']
@@ -139,7 +139,7 @@ class Scoring(object):
         m1 = self.slope(sx, sy, hx, hy)
         m2 = self.slope(hx, hy, kx, ky)
         m3 = self.slope(kx, ky, ax, ay)
-        
+        m = (m1 + m2 + m3)/3
         # if not (isinstance(m1, int) and isinstance(m2, int) and isinstance(m3, int)) : 
         #     return {'hasErrors' : True, 'score' : 0, 'points' : {'N' : self.sideDown['N'], 'LS' : self.sideDown['LS'], 
         #     'LH' : self.sideDown['LH'], 'LK' : self.sideDown['LK'], 'LA' : self.sideDown['LA']}}
@@ -148,28 +148,33 @@ class Scoring(object):
         print("slope shoulder hip:", m1)
         print("slope hip knee", m2)
         print("slope knee ankle", m3)
+        print("average slope", m)
 
 
-        if abs(m1) <= 0.18 :
-            score += 20
+        if abs(m1) <= 0.2 :
+            score += 25
         else :
             errors['LS'] = self.sideDown['LS']
 
-        if abs(m2) <= 0.18 :
-            score += 20
+        if abs(m2) <= 0.2 :
+            score += 25
         else :
             errors['LS'] = self.sideDown['LS']
 
-        if abs(m3) <= 0.18 :
-            score += 20
+        if abs(m3) <= 0.2 :
+            score += 25
         else :
             errors['LS'] = self.sideDown['LS']
+
 
         if abs(m1-m2) <= 0.1 :
-            score += 20
+            score += 5
 
         if abs(m2-m3) <= 0.1 :
-            score += 20
+            score += 5
+
+        if abs(m) <= 0.2 :
+        	score += 15
 
         if (score < threshold) : #there must have been errors
             return {'hasErrors' : True, 'score' : score, 'points' : errors}
@@ -178,7 +183,7 @@ class Scoring(object):
 
         
     
-    def correctSideUP(self, threshold = 80) :
+    def correctSideUP(self, threshold = 60) :
 
         (nx, ny) = self.sideUp['N']
         (sx, sy) = self.sideUp['LS']
@@ -191,7 +196,8 @@ class Scoring(object):
 
         m1 = self.slope(sx, sy, hx, hy)
         m2 = self.slope(hx, hy, kx, ky)
-        m3 = self.slope(kx, ky, ax, ay)    
+        m3 = self.slope(kx, ky, ax, ay)
+        m = (m1+m2+m3)/3    
 
         # if not (isinstance(m1, int) and isinstance(m2, int) and isinstance(m3, int)) :
         #     return {'hasErrors' : True, 'score' : 0, 'points' : {'N' : self.sideUp['N'], 'LS' : self.sideUp['LS'], 
@@ -201,26 +207,56 @@ class Scoring(object):
         print("slope shoulder hip:", m1)
         print("slope hip knee", m2)
         print("slope knee ankle", m3)
+        print("average slope", m)
 
-        if (math.tan(math.pi / 12)) <= abs(m1) <= (math.tan(25*math.pi/180)) : 
-            score += 15
-        if (math.tan(math.pi / 12)) <= abs(m2) <= (math.tan(25*math.pi/180)) : 
-            score += 15
-        if (math.tan(math.pi / 12)) <= abs(m3) <= (math.tan(25*math.pi/180)) : 
-            score += 15
-
-        if (not math.tan(math.pi / 12)) <= abs((m1 + m2 + m3)/3) <= (math.tan(25*math.pi/180)) :
-            errors['LS'] = self.sideUp['LS']
-
-        if abs(m1-m2) <= 0.09 :
-            score += 30
+        if 0.3 <= abs(m1) <= 0.6 :
+            score += 25
         else :
             errors['LH'] = self.sideUp['LH']
 
-        if abs(m2-m3) <= 0.09 :
+        if 0.3 <= abs(m2) <= 0.6 :
             score += 25
         else :
             errors['LK'] = self.sideUp['LK']
+
+        if 0.3 <= abs(m3) <= 0.6 :
+            score += 25
+        else :
+            errors['LK'] = self.sideUp['LK']
+
+
+
+        if abs(m1-m) <= 0.3 :
+            score += 5
+
+        if abs(m2-m) <= 0.3 :
+            score += 5
+
+        if abs(m3-m) <= 0.3 :
+            score += 5
+
+        if 0.3 <= abs(m) <= 0.6 :
+        	score += 10
+
+        # if (math.tan(math.pi / 12)) <= abs(m1) <= (math.tan(25*math.pi/180)) : 
+        #     score += 15
+        # if (math.tan(math.pi / 12)) <= abs(m2) <= (math.tan(25*math.pi/180)) : 
+        #     score += 15
+        # if (math.tan(math.pi / 12)) <= abs(m3) <= (math.tan(25*math.pi/180)) : 
+        #     score += 15
+
+        # if (not math.tan(math.pi / 12)) <= abs((m1 + m2 + m3)/3) <= (math.tan(25*math.pi/180)) :
+        #     errors['LS'] = self.sideUp['LS']
+
+        # if abs(m1-m2) <= 0.09 :
+        #     score += 30
+        # else :
+        #     errors['LH'] = self.sideUp['LH']
+
+        # if abs(m2-m3) <= 0.09 :
+        #     score += 25
+        # else :
+        #     errors['LK'] = self.sideUp['LK']
 
         if (score < threshold) : #there must have been errors
             return {'hasErrors' : True, 'score' : score, 'points' : errors}
