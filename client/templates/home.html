@@ -22,18 +22,17 @@
     <br>
     <h3 style = "font-family: 'Oswald'"><center>Push-Ups</center></h3>
     <p style = "font-family: 'Teko'"><center>Please enter a front and side view of your pushups</center></p>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
-    <script type="text/javascript" charset="utf-8">
-    // var socket = io.connect('http://' + document.domain + ':' + location.port);
-    // socket.on('connect', function() {
-    //     socket.emit('my event', {data: 'I\'m connected!'});
-    // });
-</script>
+    <!-- <script type="text/javascript" charset="utf-8">
+     var socket = io.connect('http://' + document.domain + ':' + location.port);
+     socket.on('connect', function() {
+       socket.emit('my event', {data: 'I\'m connected!'});
+    });
+    </script> -->
     <script type="text/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
-    <form method=post enctype=multipart/form-data onsubmit="alert_button()"><center>
+    <form method=post enctype=multipart/form-data onsubmit=alert_button()><center>
       <input type=file name=front>
       <input type=file name=side>
-      <input type=submit value=Upload>
+      <input type=submit value=Upload onclick="window.location.href='http://localhost:5000/process'">
     </center></form>
 
     <!-- Optional JavaScript -->
