@@ -39,12 +39,12 @@ class Scoring(object):
                 
 
     def correctFrontDOWN(self, threshold = 100) :
-        (lsx, lsy) = self.frontDown['ls']
-        (rsx, rsy) = self.frontDown['rs']
-        (lex, ley) = self.frontDown['le']
-        (lwx, lwy) = self.frontDown['lw']        
-        (rex, rey) = self.frontDown['re']
-        (rwx, rwy) = self.frontDown['rw']
+        (lsx, lsy) = self.frontDown['LS']
+        (rsx, rsy) = self.frontDown['RS']
+        (lex, ley) = self.frontDown['LE']
+        (lwx, lwy) = self.frontDown['LW']        
+        (rex, rey) = self.frontDown['RE']
+        (rwx, rwy) = self.frontDown['RW']
 
         score = 0
         errors = dict()
@@ -55,16 +55,16 @@ class Scoring(object):
             score += 40
 
         else :
-            errors['le'] = self.frontDown['le']
-            errors['re'] = self.frontDown['re']
+            errors['LE'] = self.frontDown['LE']
+            errors['RE'] = self.frontDown['RE']
 
 
         if (self.dist(lsx, lsy, lex, ley) <= (0.55)*self.dist(lex, ley, lwx, lwy)) and (self.dist(rsx, rsy, rex, rey) <= (0.55)*self.dist(rex, rey, rwx, rwy)) :
             score += 60
 
         else :
-            errors['le'] = self.frontDown['le']
-            errors['re'] = self.frontDown['re']
+            errors['LE'] = self.frontDown['LE']
+            errors['RE'] = self.frontDown['RE']
 
         if (score < threshold) : #there must have been errors
             return {'hasErrors' : True, 'score' : score, 'points' : errors}
@@ -72,12 +72,12 @@ class Scoring(object):
         return {'hasErrors' : False, 'score' : score}
         
     def correctFrontUP(self, threshold = 100) :
-        (lsx, lsy) = self.frontUp['ls']
-        (rsx, rsy) = self.frontUp['rs']
-        (lex, ley) = self.frontUp['le']
-        (rex, rey) = self.frontUp['re']
-        (lwx, lwy) = self.frontUp['lw']        
-        (rwx, rwy) = self.frontUp['rw']
+        (lsx, lsy) = self.frontUp['LS']
+        (rsx, rsy) = self.frontUp['RS']
+        (lex, ley) = self.frontUp['LE']
+        (rex, rey) = self.frontUp['RE']
+        (lwx, lwy) = self.frontUp['LW']        
+        (rwx, rwy) = self.frontUp['RW']
 
         score = 0
         errors = dict()
@@ -86,18 +86,18 @@ class Scoring(object):
             score += 50
 
         else :
-            errors['le'] = self.frontUp['le']
-            errors['re'] = self.frontUp['re']
-            errors['ls'] = self.frontUp['ls']
-            errors['rs'] = self.frontUp['rs']
+            errors['LE'] = self.frontUp['LE']
+            errors['RE'] = self.frontUp['RE']
+            errors['LS'] = self.frontUp['LS']
+            errors['RS'] = self.frontUp['RS']
 
         if ((not isinstance(self.slope(lex, ley, lwx, lwy), int)) or abs(self.slope(lex, ley, lwx, lwy)) > 4) and ((not isinstance(self.slope(rex, rey, rwx, rwy), int)) or abs(self.slope(rex, rey, rwx, rwy)) > 4) :
             score += 50
         else :
-            errors['le'] = self.frontUp['le']
-            errors['re'] = self.frontUp['re']
-            errors['lw'] = self.frontUp['lw']
-            errors['rw'] = self.frontUp['rw']
+            errors['LE'] = self.frontUp['LE']
+            errors['RE'] = self.frontUp['RE']
+            errors['LW'] = self.frontUp['LW']
+            errors['RW'] = self.frontUp['RW']
 
         if (score < threshold) : #there must have been errors
             return {'hasErrors' : True, 'score' : score, 'points' : errors}
@@ -109,11 +109,11 @@ class Scoring(object):
     #k = knee
     #a = ankle
     def correctSideDOWN(self, threshold = 80) :
-        (nx, ny) = self.sideDown['n']
-        (sx, sy) = self.sideDown['ls']
-        (hx, hy) = self.sideDown['lh']
-        (kx, ky) = self.sideDown['lk']
-        (ax, ay) = self.sideDown['la']   
+        (nx, ny) = self.sideDown['N']
+        (sx, sy) = self.sideDown['LS']
+        (hx, hy) = self.sideDown['LH']
+        (kx, ky) = self.sideDown['LK']
+        (ax, ay) = self.sideDown['LA']   
 
         score = 0
         errors = dict()
@@ -123,23 +123,23 @@ class Scoring(object):
         m3 = self.slope(kx, ky, ax, ay)
         
         if not (isinstance(m1, int) and isinstance(m2, int) and isinstance(m3, int)) : 
-            return {'hasErrors' : true, 'score' : 0, 'points' : {'n' : self.sideDown['n'], 'ls' : self.sideDown['ls'], 
-            'lh' : self.sideDown['lh'], 'lk' : self.sideDown['lk'], 'la' : self.sideDown['la']}}
+            return {'hasErrors' : true, 'score' : 0, 'points' : {'N' : self.sideDown['N'], 'LS' : self.sideDown['LS'], 
+            'LH' : self.sideDown['LH'], 'LK' : self.sideDown['LK'], 'LA' : self.sideDown['LA']}}
         
         if abs(m1) <= 0.18 :
             score += 20
         else :
-            errors['ls'] = self.sideDown['ls']
+            errors['LS'] = self.sideDown['LS']
 
         if abs(m2) <= 0.18 :
             score += 20
         else :
-            errors['ls'] = self.sideDown['ls']
+            errors['LS'] = self.sideDown['LS']
 
         if abs(m3) <= 0.18 :
             score += 20
         else :
-            errors['ls'] = self.sideDown['ls']
+            errors['LS'] = self.sideDown['LS']
 
         if abs(m1-m2) <= 0.1 :
             score += 20
@@ -156,11 +156,11 @@ class Scoring(object):
     
     def correctSideUP(self, threshold = 80) :
 
-        (nx, ny) = self.sideUp['n']
-        (sx, sy) = self.sideUp['ls']
-        (hx, hy) = self.sideUp['lh']
-        (kx, ky) = self.sideUp['lk']
-        (ax, ay) = self.sideUp['la']   
+        (nx, ny) = self.sideUp['N']
+        (sx, sy) = self.sideUp['LS']
+        (hx, hy) = self.sideUp['LH']
+        (kx, ky) = self.sideUp['LK']
+        (ax, ay) = self.sideUp['LA']   
 
         score = 0
         errors = dict()
@@ -170,8 +170,8 @@ class Scoring(object):
         m3 = self.slope(kx, ky, ax, ay)    
 
         if not (isinstance(m1, int) and isinstance(m2, int) and isinstance(m3, int)) :
-            return {'hasErrors' : true, 'score' : 0, 'points' : {'n' : self.sideUp['n'], 'ls' : self.sideUp['ls'], 
-                    'lh' : self.sideUp['lh'], 'lk' : self.sideUp['lk'], 'la' : self.sideUp['la']}}
+            return {'hasErrors' : true, 'score' : 0, 'points' : {'N' : self.sideUp['N'], 'LS' : self.sideUp['LS'], 
+                    'LH' : self.sideUp['LH'], 'LK' : self.sideUp['LK'], 'LA' : self.sideUp['LA']}}
 
         
         if (math.tan(math.pi / 12)) <= abs(m1) <= (math.tan(25*math.pi/180)) : 
@@ -182,17 +182,17 @@ class Scoring(object):
             score += 15
 
         if (not math.tan(math.pi / 12)) <= abs((m1 + m2 + m3)/3) <= (math.tan(25*math.pi/180)) :
-            errors['ls'] = self.sideUp['ls']
+            errors['LS'] = self.sideUp['LS']
 
         if abs(m1-m2) <= 0.09 :
             score += 30
         else :
-            errors['lh'] = self.sideUp['lh']
+            errors['LH'] = self.sideUp['LH']
 
         if abs(m2-m3) <= 0.09 :
             score += 25
         else :
-            errors['lk'] = self.sideUp['lk']
+            errors['LK'] = self.sideUp['LK']
 
         if (score < threshold) : #there must have been errors
             return {'hasErrors' : True, 'score' : score, 'points' : errors}
