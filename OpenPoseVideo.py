@@ -32,9 +32,9 @@ class Analysis():
 
         self.need = []
         if (VIEW == 'side'):
-            self.need = {1: 'N', 11 : 'LH', 12 : 'LK' ,13 : 'LA' }
+            self.need = {1: 'N', 5: 'LS', 11 : 'LH', 12 : 'LK' ,13 : 'LA' }
         else:
-            self.need = {1 : 'N',2 : 'RH' ,3: 'RE' ,4 : 'RW' ,5 : 'LS' ,6 : 'LE' ,7 : 'LW'} 
+            self.need = {1 : 'N',2 : 'RS' ,3: 'RE' ,4 : 'RW' ,5 : 'LS' ,6 : 'LE' ,7 : 'LW'} 
 
 
 
@@ -57,6 +57,9 @@ class Analysis():
             for i in self.need.keys():
                 dict[self.need[i]] = pointlist[i]
 
+        if self.MODE == 'MPI':
+            for i in self.need.keys():
+                dict[self.need[i]] = pointlist[i]
         return dict
 
     
@@ -80,6 +83,9 @@ class Analysis():
             frameCopy = np.copy(frame)
             if not hasFrame:
                 break
+
+            #if count < 22:
+            #    continue
 
             frameWidth = frame.shape[1]
             frameHeight = frame.shape[0]
@@ -118,8 +124,8 @@ class Analysis():
                         points.append(None)
                 else :
                     points.append(None)
-                # 11 is LH
-                if i == 11:
+                # 11 is LS
+                if i == 5:
                     if y > self.maxY:
                         isMax = True
                         self.maxY = y
@@ -149,10 +155,11 @@ class Analysis():
             # cv2.putText(frame, "time taken = {:.2f} sec".format(time.time() - t), (50, 50), cv2.FONT_HERSHEY_COMPLEX, .8, (255, 50, 0), 2, lineType=cv2.LINE_AA)
             # cv2.putText(frame, "OpenPose using OpenCV", (50, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 50, 0), 2, lineType=cv2.LINE_AA)
             # cv2.imshow('Output-Keypoints', frameCopy)
+            #cv2.waitKey(1)
             # cv2.imshow('Output-Skeleton', frame)
 
-        cv2.imwrite('OutputMax.jpg', self.maxFrame)
-        cv2.imwrite('OutputMin.jpg', self.minFrame)
+        cv2.imwrite('OutputMax' + self.VIEW + '.jpg', self.maxFrame)
+        cv2.imwrite('OutputMin'+ self.VIEW + '.jpg', self.minFrame)
 
         print(self.maxDict)
         print(self.minDict)
