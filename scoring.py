@@ -49,19 +49,32 @@ class Scoring(object):
         score = 0
         errors = dict()
 
-
+        print("fronDown -")
+        print('Slope lew = ', self.slope(lex, ley, lwx, lwy) ) 
+        print('Slope rew = ', self.slope(rex, rey, rwx, rwy) ) 
         #elbows tucked in
-        if ((self.slope(lex, ley, lwx, lwy) == None) or (abs(self.slope(lex, ley, lwx, lwy)) > 5) ) and (((self.slope(rex, rey, rwx, rwy) == None)) or (abs(self.slope(rex, rey, rwx, rwy)) > 5) ):
-            score += 40
+        if ((self.slope(lex, ley, lwx, lwy) == None) or (abs(self.slope(lex, ley, lwx, lwy)) > 3.7) ) and (((self.slope(rex, rey, rwx, rwy) == None)) or (abs(self.slope(rex, rey, rwx, rwy)) > 3.7) ):
+            score += 50
 
         else :
             errors['LE'] = self.frontDown['LE']
             errors['RE'] = self.frontDown['RE']
 
+        print('Ratio of left shoulder elbow / left elbow wrist - ', self.dist(lsx, lsy, lex, ley) / self.dist(lex, ley, lwx, lwy))
+        print('Ratio of elbow sep / shoulder sep --', self.dist(lex,ley,rex,rey) / self.dist(lsx,lsy,rsx,rsy))
+    
+        
+        if (self.dist(lsx, lsy, lex, ley) <= (0.7)*self.dist(lex, ley, lwx, lwy)) and (self.dist(rsx, rsy, rex, rey) <= (0.7)*self.dist(rex, rey, rwx, rwy)) :
+            score += 10
+        elif (self.dist(lsx, lsy, lex, ley) <= (0.65)*self.dist(lex, ley, lwx, lwy)) and (self.dist(rsx, rsy, rex, rey) <= (0.65)*self.dist(rex, rey, rwx, rwy)) :
+            score += 20
 
-        if (self.dist(lsx, lsy, lex, ley) <= (0.55)*self.dist(lex, ley, lwx, lwy)) and (self.dist(rsx, rsy, rex, rey) <= (0.55)*self.dist(rex, rey, rwx, rwy)) :
-            score += 60
+        else :
+            errors['LE'] = self.frontDown['LE']
+            errors['RE'] = self.frontDown['RE']
 
+        if (self.dist(lsx, lsy, rsx, rsy)*(1.4) >= self.dist(lex, ley, rex, rey)):
+            score += 30
         else :
             errors['LE'] = self.frontDown['LE']
             errors['RE'] = self.frontDown['RE']
@@ -82,17 +95,22 @@ class Scoring(object):
         score = 0
         errors = dict()
         
-        if ((self.slope(lex, ley, lsx, lsy) == None) or abs(self.slope(lex, ley, lsx, lsy)) > 4) and ((self.slope(rex, rey, rsx, rsy) == None) or abs(self.slope(rex, rey, rsx, rsy)) > 4) :
-            score += 50
+        print("frontUP -")
+        print('Slope les = ', self.slope(lsx, lsy, lex, ley) ) 
+        print('Slope res = ', self.slope(rsx, rsy, rex, rey) ) 
+        if ((self.slope(lex, ley, lsx, lsy) == None) or abs(self.slope(lex, ley, lsx, lsy)) > 1.2) and ((self.slope(rex, rey, rsx, rsy) == None) or abs(self.slope(rex, rey, rsx, rsy)) > 1.2) :
+            score += 30
 
         else :
             errors['LE'] = self.frontUp['LE']
             errors['RE'] = self.frontUp['RE']
             errors['LS'] = self.frontUp['LS']
             errors['RS'] = self.frontUp['RS']
-
-        if ((self.slope(lex, ley, lwx, lwy) == None) or abs(self.slope(lex, ley, lwx, lwy)) > 4) and ((self.slope(rex, rey, rwx, rwy) == None) or abs(self.slope(rex, rey, rwx, rwy)) > 4) :
-            score += 50
+        print('\n')
+        print('Slope lew = ', self.slope(lex, ley, lwx, lwy) ) 
+        print('Slope rew = ', self.slope(rex, rey, rwx, rwy) ) 
+        if ((self.slope(lex, ley, lwx, lwy) == None) or abs(self.slope(lex, ley, lwx, lwy)) > 3) and ((self.slope(rex, rey, rwx, rwy) == None) or abs(self.slope(rex, rey, rwx, rwy)) > 3) :
+            score += 70
         else :
             errors['LE'] = self.frontUp['LE']
             errors['RE'] = self.frontUp['RE']
@@ -126,6 +144,12 @@ class Scoring(object):
         #     return {'hasErrors' : True, 'score' : 0, 'points' : {'N' : self.sideDown['N'], 'LS' : self.sideDown['LS'], 
         #     'LH' : self.sideDown['LH'], 'LK' : self.sideDown['LK'], 'LA' : self.sideDown['LA']}}
         
+        print("Side Down:")
+        print("slope shoulder hip:", m1)
+        print("slope hip knee", m2)
+        print("slope knee ankle", m3)
+
+
         if abs(m1) <= 0.18 :
             score += 20
         else :
@@ -173,7 +197,11 @@ class Scoring(object):
         #     return {'hasErrors' : True, 'score' : 0, 'points' : {'N' : self.sideUp['N'], 'LS' : self.sideUp['LS'], 
         #             'LH' : self.sideUp['LH'], 'LK' : self.sideUp['LK'], 'LA' : self.sideUp['LA']}}
 
-        
+        print("Side up:")
+        print("slope shoulder hip:", m1)
+        print("slope hip knee", m2)
+        print("slope knee ankle", m3)
+
         if (math.tan(math.pi / 12)) <= abs(m1) <= (math.tan(25*math.pi/180)) : 
             score += 15
         if (math.tan(math.pi / 12)) <= abs(m2) <= (math.tan(25*math.pi/180)) : 
@@ -201,7 +229,8 @@ class Scoring(object):
 
 
     def get_results(self) :
-        return (self.correctSideUP(), self.correctSideDOWN(), self.correctFrontUP(), self.correctFrontDOWN())
+        #return (self.correctSideUP(), self.correctSideDOWN(), self.correctFrontUP(), self.correctFrontDOWN())
+        return (self.correctSideUP())
 
 
     

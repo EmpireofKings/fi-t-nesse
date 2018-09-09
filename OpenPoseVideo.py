@@ -84,8 +84,8 @@ class Analysis():
             if not hasFrame:
                 break
 
-            #if count < 22:
-            #    continue
+            if count > 50 or self.VIEW != 'side':
+                continue
 
             frameWidth = frame.shape[1]
             frameHeight = frame.shape[0]
