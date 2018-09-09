@@ -3,7 +3,7 @@ from flask import Flask, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
 from flask import send_from_directory
 
-UPLOAD_FOLDER = '/tmp/'
+UPLOAD_FOLDER = '`/home/mayankj/technique/tmp/'
 ALLOWED_EXTENSIONS = set(['mp4'])
 
 app = Flask(__name__)

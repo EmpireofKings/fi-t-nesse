@@ -2,6 +2,11 @@ import cv2
 import time
 import numpy as np
 
+
+
+
+
+
 MODE = "MPI"
 
 if MODE is "COCO":
@@ -27,7 +32,7 @@ Left Ear – 17, Background – 18
 KEYPOINTS = {}
 
 
-VIEW = 'front'
+VIEW = 'side'
 need = []
 if (VIEW == 'side'):
     need = {0 : 'NOSE', 1: 'NECK', 11 : 'LH', 12 : 'LK' ,13 : 'LA' }
@@ -40,7 +45,7 @@ else:
 
 inWidth = 368
 inHeight = 368
-threshold = 0.3
+threshold = 0.1
 
 neckMaxY = 0
 neckMinY = 1000000
@@ -53,7 +58,7 @@ neckMaxYCheck = False
 maxFrame = None
 minFrame = None
 
-input_source = "front.mp4"
+input_source = "tmp/side.mp4"
 cap = cv2.VideoCapture(input_source)
 hasFrame, frame = cap.read()
 
@@ -110,7 +115,7 @@ while hasFrame:
                 points.append(None)
         else :
             points.append(None)
-        if i == 1:
+        if i == 11:
             if y > neckMaxY:
                 isMax = True
                 neckMaxY = y
@@ -123,7 +128,7 @@ while hasFrame:
         maxFrame = frameCopy
     if (isMin == True):
         neckMinYArray = points
-    minFrame = frameCopy
+        minFrame = frameCopy
 
 
     # # Draw Skeleton
