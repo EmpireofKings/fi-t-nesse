@@ -1,22 +1,22 @@
 import os
-from flask import Flask, flash, request, redirect, url_for, render_template
+from flask import Flask, flash, request, redirect, url_for, render_template, jsonify
 from werkzeug.utils import secure_filename
 from flask import send_from_directory
-from flask_socketio import SocketIO, send, emit
+import OpenPoseVideo
+import scoring
+
 
 UPLOAD_FOLDER = '/Users/youngyona/PycharmProjects/technique/tmp'
 ALLOWED_EXTENSIONS = set(['mp4'])
 
 template_dir = "/Users/youngyona/PycharmProjects/technique/client/templates"
-
 static_dir = "/Users/youngyona/PycharmProjects/technique/client/static"
 
 print(template_dir)
 print(static_dir)
 app = Flask(__name__, static_folder=static_dir, template_folder=template_dir)
-socketio = SocketIO(app)
 
-state = "ready"
+state = 0
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 1024
@@ -58,8 +58,7 @@ def upload_file():
         if side and allowed_file(side.filename):
             side.filename = "side.mp4"
             side.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(side.filename)))
-            # return redirect(url_for('uploaded_file',
-            #                         filename=filename_side))
+            return redirect(url_for('process'))
 
     return render_template('home.html')
 
@@ -70,19 +69,14 @@ def upload_file():
 #                                filename_front)
 
 
-@app.route('/ready', methods=['GET', 'POST'])
-def standby():
-    return render_template('ready.html')
+@app.route('/process', methods=['GET', 'POST'])
+def process():
+    if state == 0:
+        return render_template('process.html')
+    else:
+        return render_template('results.html')
 
-
-@socketio.on('alert_button')
-def handle_alert_event(json):
-    emit('alert', "video is processing")
-    # it will forward the json to all clients.
-    print('received json: {0}'.format(str(json)))
-    return render_template('process.html')
 
 
 if __name__ == '__main__':
     app.run()
-    socketio.run(app)
