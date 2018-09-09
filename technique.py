@@ -4,7 +4,6 @@ from werkzeug.utils import secure_filename
 from flask import send_from_directory
 from flask_socketio import SocketIO, send, emit
 
-<<<<<<< HEAD
 UPLOAD_FOLDER = '/Users/youngyona/PycharmProjects/technique/tmp'
 ALLOWED_EXTENSIONS = set(['mp4'])
 
@@ -16,6 +15,8 @@ print(template_dir)
 print(static_dir)
 app = Flask(__name__, static_folder=static_dir, template_folder=template_dir)
 socketio = SocketIO(app)
+
+state = "ready"
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 1024
@@ -76,6 +77,7 @@ def standby():
 
 @socketio.on('alert_button')
 def handle_alert_event(json):
+    emit('alert', "video is processing")
     # it will forward the json to all clients.
     print('received json: {0}'.format(str(json)))
     return render_template('process.html')
@@ -83,3 +85,4 @@ def handle_alert_event(json):
 
 if __name__ == '__main__':
     app.run()
+    socketio.run(app)
