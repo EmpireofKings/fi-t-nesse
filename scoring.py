@@ -123,7 +123,7 @@ class Scoring(object):
         m3 = self.slope(kx, ky, ax, ay)
         
         if not (isinstance(m1, int) and isinstance(m2, int) and isinstance(m3, int)) : 
-            return {'hasErrors' : true, 'score' : 0, 'points' : {'N' : self.sideDown['N'], 'LS' : self.sideDown['LS'], 
+            return {'hasErrors' : True, 'score' : 0, 'points' : {'N' : self.sideDown['N'], 'LS' : self.sideDown['LS'], 
             'LH' : self.sideDown['LH'], 'LK' : self.sideDown['LK'], 'LA' : self.sideDown['LA']}}
         
         if abs(m1) <= 0.18 :
@@ -170,7 +170,7 @@ class Scoring(object):
         m3 = self.slope(kx, ky, ax, ay)    
 
         if not (isinstance(m1, int) and isinstance(m2, int) and isinstance(m3, int)) :
-            return {'hasErrors' : true, 'score' : 0, 'points' : {'N' : self.sideUp['N'], 'LS' : self.sideUp['LS'], 
+            return {'hasErrors' : True, 'score' : 0, 'points' : {'N' : self.sideUp['N'], 'LS' : self.sideUp['LS'], 
                     'LH' : self.sideUp['LH'], 'LK' : self.sideUp['LK'], 'LA' : self.sideUp['LA']}}
 
         
