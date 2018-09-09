@@ -265,8 +265,7 @@ class Scoring(object):
 
 
     def get_results(self) :
-        #return (self.correctSideUP(), self.correctSideDOWN(), self.correctFrontUP(), self.correctFrontDOWN())
-        return (self.correctSideUP())
+        return (self.correctSideUP(), self.correctSideDOWN(), self.correctFrontUP(), self.correctFrontDOWN())
 
 
     

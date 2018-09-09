@@ -6,12 +6,6 @@ import numpy as np
 class Analysis():
     def __init__(self, MODE = 'COCO', VIEW = 'FRONT', FILE_NAME='front.mp4'):
         
-        '''
-        Nose – 0, Neck – 1, Right Shoulder – 2, Right Elbow – 3, Right Wrist – 4,
-        Left Shoulder – 5, Left Elbow – 6, Left Wrist – 7, Right Hip – 8, Right Knee – 9, Right Ankle – 10, Left Hip – 11, Left Knee – 12,
-        LAnkle – 13, Right Eye – 14, Left Eye – 15, Right Ear – 16,
-        Left Ear – 17, Background – 18
-        '''
         self.MODE = MODE
         self.VIEW = VIEW
         self.FILE_NAME = FILE_NAME
@@ -84,8 +78,6 @@ class Analysis():
             if not hasFrame:
                 break
 
-            if count > 50 or self.VIEW != 'side':
-                continue
 
             frameWidth = frame.shape[1]
             frameHeight = frame.shape[0]
@@ -115,8 +107,9 @@ class Analysis():
 
                 if prob > self.threshold :
                     if(i in self.need.keys()): 
-                        cv2.circle(frameCopy, (int(x), int(y)), 8, (0, 255, 255), thickness=-1, lineType=cv2.FILLED)
-                        cv2.putText(frameCopy, "{}".format(i), (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, lineType=cv2.LINE_AA)
+                        if (i != 1):
+                            cv2.circle(frameCopy, (int(x), int(y)), 12, (0, 255, 255), thickness=-1, lineType=cv2.FILLED)
+                       # cv2.putText(frameCopy, "{}".format(i), (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, lineType=cv2.LINE_AA)
 
                         # Add the point to the list if the probability is greater than the threshold
                         points.append((int(x), int(y)))
@@ -158,8 +151,8 @@ class Analysis():
             #cv2.waitKey(1)
             # cv2.imshow('Output-Skeleton', frame)
 
-        cv2.imwrite('OutputMax' + self.VIEW + '.jpg', self.maxFrame)
-        cv2.imwrite('OutputMin'+ self.VIEW + '.jpg', self.minFrame)
+        cv2.imwrite('OutputMax' + self.VIEW + '.png', self.maxFrame)
+        cv2.imwrite('OutputMin'+ self.VIEW + '.png', self.minFrame)
 
         print(self.maxDict)
         print(self.minDict)

@@ -2,15 +2,14 @@ import os
 from flask import Flask, flash, request, redirect, url_for, render_template, jsonify
 from werkzeug.utils import secure_filename
 from flask import send_from_directory
-import OpenPoseVideo
-import scoring
+import main
 
 
-UPLOAD_FOLDER = '/Users/youngyona/PycharmProjects/technique/tmp'
+UPLOAD_FOLDER = '/home/mayankj/technique/media'
 ALLOWED_EXTENSIONS = set(['mp4'])
 
-template_dir = "/Users/youngyona/PycharmProjects/technique/client/templates"
-static_dir = "/Users/youngyona/PycharmProjects/technique/client/static"
+template_dir = "/home/mayankj/technique/client/templates"
+static_dir = "/home/mayankj/technique/client/static"
 
 print(template_dir)
 print(static_dir)

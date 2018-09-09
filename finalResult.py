@@ -90,10 +90,16 @@ class FinalResult:
 
 
     def main(this,sideUp, sideDown, frontUp, frontDown):
-        res_sideUp = this.cal_sideUp(sideUp["hasErrors"], sideUp["points"])
-        res_sideDown = this.cal_sideDown(sideDown["hasErrors"], sideDown[
+        if (sideUp['hasErrors']):
+            res_sideUp = this.cal_sideUp(sideUp["hasErrors"], sideUp["points"])
+        else:
+            res_sideUp = ("", )
+        if (sideDown['hasErrors']):
+            res_sideDown = this.cal_sideDown(sideDown["hasErrors"], sideDown[
         "points"])
-        res_frontUp = this.cal_frontUp(frontUp["hasErrors"], frontUp["points"])
-        res_frontDown = this.cal_frontDown(frontDown["hasErrors"], frontDown["points"])
+        if (frontUp['hasErrors']):
+            res_frontUp = this.cal_frontUp(frontUp["hasErrors"], frontUp["points"])
+        if (frontDown['hasErrors']):
+            res_frontDown = this.cal_frontDown(frontDown["hasErrors"], frontDown["points"])
         
         return (res_sideUp, res_sideDown, res_frontUp, res_frontDown)
