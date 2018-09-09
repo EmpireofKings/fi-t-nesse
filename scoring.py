@@ -15,35 +15,15 @@ import math
 ########################
 
 
-low_pos = {
-
-        'n' :  (960, 680),
-        'sr' :(834, 610),
-        'er': (751, 563), 
-        'wr' : (751, 704), 
-        'sl' :(1043, 610),
-        'el': (1168, 563),
-        'wl': (1126, 704)
-        
-}
-
-
 
 class Scoring(object):
     
-    def __init__(self, dic) :
-
-        
-        self.sl = dic.get('sl')
-        self.sr = dic.get('sr')
-        self.el = dic.get('el')
-        self.er = dic.get('er')
-        self.wl = dic.get('wl')
-        self.wr = dic.get('wr')
-        self.n = dic.get('n')
-        self.h = dic.get('h')
-        self.k = dic.get('k')
-        self.a = dic.get('a')
+    def __init__(self, sideUp, sideDown, frontUp, frontDown) :
+        self.sideUp = sideUp
+        self.sideDown = sideDown
+        self.frontUp = frontUp
+        self.frontDown = frontDown
+        self.results = self.get_results()
         
     
     def dist(self,x1,y1,x2,y2) :
@@ -57,105 +37,171 @@ class Scoring(object):
             return None
         return ((y1-y2)/(x1-x2))
                 
-    #sl = shoulder left
-    #el = elbow left
-    #hl = hand left
-    def correctFrontDOWN(self, threshold = 90) :
-        (slx, sly) = self.sl
-        (srx, sry) = self.sr
-        (elx, ely) = self.el
-        (hlx, hly) = self.wl        
-        (erx, ery) = self.er
-        (hrx, hry) = self.wr
+
+    def correctFrontDOWN(self, threshold = 100) :
+        (lsx, lsy) = self.frontDown['ls']
+        (rsx, rsy) = self.frontDown['rs']
+        (lex, ley) = self.frontDown['le']
+        (lwx, lwy) = self.frontDown['lw']        
+        (rex, rey) = self.frontDown['re']
+        (rwx, rwy) = self.frontDown['rw']
 
         score = 0
-        if (not isinstance(self.slope(elx, ely, hlx, hly), int)) or abs(self.slope(elx, ely, hlx, hly)) > 2 :
+        errors = dict()
+
+
+        #elbows tucked in
+        if ((not isinstance(self.slope(lex, ley, lwx, lwy), int)) or (abs(self.slope(lex, ley, lwx, lwy)) > 5) ) and ((not isinstance(self.slope(rex, rey, rwx, rwy), int)) or (abs(self.slope(rex, rey, rwx, rwy)) > 5) ):
             score += 40
-        if (not isinstance(self.slope(erx, ery, hrx, hry), int)) or abs(self.slope(erx, ery, hrx, hry)) > 2 :
-            score += 40
-        if (self.dist(slx, sly, elx, ely) <= (0.3)*self.dist(elx, ely, hlx, hly)) :
-            score += 10
-        if (self.dist(srx, sry, erx, ery) <= (0.3)*self.dist(erx, ery, hrx, hry)) :
-            score += 10
-        return (score >= threshold)
+
+        else :
+            errors['le'] = self.frontDown['le']
+            errors['re'] = self.frontDown['re']
+
+
+        if (self.dist(lsx, lsy, lex, ley) <= (0.55)*self.dist(lex, ley, lwx, lwy)) and (self.dist(rsx, rsy, rex, rey) <= (0.55)*self.dist(rex, rey, rwx, rwy)) :
+            score += 60
+
+        else :
+            errors['le'] = self.frontDown['le']
+            errors['re'] = self.frontDown['re']
+
+        if (score < threshold) : #there must have been errors
+            return {'hasErrors' : True, 'score' : score, 'points' : errors}
+
+        return {'hasErrors' : False, 'score' : score}
         
-        
-    def correctFrontUP(self, threshold = 150) :
-        (slx, sly) = self.sl
-        (srx, sry) = self.sr
-        (elx, ely) = self.el
-        (hlx, hly) = self.wl        
-        (erx, ery) = self.er
-        (hrx, hry) = self.wr
+    def correctFrontUP(self, threshold = 100) :
+        (lsx, lsy) = self.frontUp['ls']
+        (rsx, rsy) = self.frontUp['rs']
+        (lex, ley) = self.frontUp['le']
+        (rex, rey) = self.frontUp['re']
+        (lwx, lwy) = self.frontUp['lw']        
+        (rwx, rwy) = self.frontUp['rw']
+
         score = 0
+        errors = dict()
         
-        
-        if (not isinstance(self.slope(elx, ely, slx, sly), int)) or abs(self.slope(elx, ely, slx, sly)) > 80 :
+        if ((not isinstance(self.slope(lex, ley, lsx, lsy), int)) or abs(self.slope(lex, ley, lsx, lsy)) > 4) and ((not isinstance(self.slope(rex, rey, rsx, rsy), int)) or abs(self.slope(rex, rey, rsx, rsy)) > 4) :
             score += 50
-        if (not isinstance(self.slope(erx, ery, srx, sry), int)) or abs(self.slope(erx, ery, srx, sry)) > 80 :
+
+        else :
+            errors['le'] = self.frontUp['le']
+            errors['re'] = self.frontUp['re']
+            errors['ls'] = self.frontUp['ls']
+            errors['rs'] = self.frontUp['rs']
+
+        if ((not isinstance(self.slope(lex, ley, lwx, lwy), int)) or abs(self.slope(lex, ley, lwx, lwy)) > 4) and ((not isinstance(self.slope(rex, rey, rwx, rwy), int)) or abs(self.slope(rex, rey, rwx, rwy)) > 4) :
             score += 50
-        if (not isinstance(self.slope(elx, ely, hlx, hly), int)) or abs(self.slope(elx, ely, hlx, hly)) > 80 :
-            score += 50
-        if (not isinstance(self.slope(erx, ery, hrx, hry), int)) or abs(self.slope(erx, ery, hrx, hry)) > 80 :
-            score += 50
-        return (score >= threshold)
-    
+        else :
+            errors['le'] = self.frontUp['le']
+            errors['re'] = self.frontUp['re']
+            errors['lw'] = self.frontUp['lw']
+            errors['rw'] = self.frontUp['rw']
+
+        if (score < threshold) : #there must have been errors
+            return {'hasErrors' : True, 'score' : score, 'points' : errors}
+
+        return {'hasErrors' : False, 'score' : score}    
         
     #n = neck
     #h = hip
     #k = knee
     #a = ankle
-    def correctSideDOWN(self, threshold = 70) :
-        (nx, ny) = self.n
-        (hx, hy) = self.h
-        (kx, ky) = self.k
-        (ax, ay) = self.a    
+    def correctSideDOWN(self, threshold = 80) :
+        (nx, ny) = self.sideDown['n']
+        (sx, sy) = self.sideDown['ls']
+        (hx, hy) = self.sideDown['lh']
+        (kx, ky) = self.sideDown['lk']
+        (ax, ay) = self.sideDown['la']   
+
         score = 0
-        m1 = self.slope(nx, ny, hx, hy)
+        errors = dict()
+
+        m1 = self.slope(sx, sy, hx, hy)
         m2 = self.slope(hx, hy, kx, ky)
         m3 = self.slope(kx, ky, ax, ay)
         
-        if not (isinstance(m1, int) and isinstance(m2, int) and isinstance(m3, int)) : return False
+        if not (isinstance(m1, int) and isinstance(m2, int) and isinstance(m3, int)) : 
+            return {'hasErrors' : true, 'score' : 0, 'points' : {'n' : self.sideDown['n'], 'ls' : self.sideDown['ls'], 
+            'lh' : self.sideDown['lh'], 'lk' : self.sideDown['lk'], 'la' : self.sideDown['la']}}
         
         if abs(m1) <= 0.18 :
             score += 20
+        else :
+            errors['ls'] = self.sideDown['ls']
+
         if abs(m2) <= 0.18 :
             score += 20
+        else :
+            errors['ls'] = self.sideDown['ls']
+
         if abs(m3) <= 0.18 :
             score += 20
-        if abs(m1-m2) <= 0.09 :
-            score += 15
-        if abs(m2-m3) <= 0.09 :
-            score += 15
-        return score >= threshold
+        else :
+            errors['ls'] = self.sideDown['ls']
+
+        if abs(m1-m2) <= 0.1 :
+            score += 20
+
+        if abs(m2-m3) <= 0.1 :
+            score += 20
+
+        if (score < threshold) : #there must have been errors
+            return {'hasErrors' : True, 'score' : score, 'points' : errors}
+
+        return {'hasErrors' : False, 'score' : score}    
+
         
     
-    def correctSideUP(self, threshold = 110) :
-        (nx, ny) = self.n
-        (hx, hy) = self.h
-        (kx, ky) = self.k
-        (ax, ay) = self.a
+    def correctSideUP(self, threshold = 80) :
+
+        (nx, ny) = self.sideUp['n']
+        (sx, sy) = self.sideUp['ls']
+        (hx, hy) = self.sideUp['lh']
+        (kx, ky) = self.sideUp['lk']
+        (ax, ay) = self.sideUp['la']   
+
         score = 0
-        m1 = self.slope(nx, ny,hx, hy)
-        m2 = self.slope(hx, hy,kx, ky)
-        m3 = self.slope(kx, ky,ax, ay)
-        
-        if not (isinstance(m1, int) and isinstance(m2, int) and isinstance(m3, int)) : return False
+        errors = dict()
+
+        m1 = self.slope(sx, sy, hx, hy)
+        m2 = self.slope(hx, hy, kx, ky)
+        m3 = self.slope(kx, ky, ax, ay)    
+
+        if not (isinstance(m1, int) and isinstance(m2, int) and isinstance(m3, int)) :
+            return {'hasErrors' : true, 'score' : 0, 'points' : {'n' : self.sideUp['n'], 'ls' : self.sideUp['ls'], 
+                    'lh' : self.sideUp['lh'], 'lk' : self.sideUp['lk'], 'la' : self.sideUp['la']}}
+
         
         if (math.tan(math.pi / 12)) <= abs(m1) <= (math.tan(25*math.pi/180)) : 
-            score += 20
+            score += 15
         if (math.tan(math.pi / 12)) <= abs(m2) <= (math.tan(25*math.pi/180)) : 
-            score += 20
+            score += 15
         if (math.tan(math.pi / 12)) <= abs(m3) <= (math.tan(25*math.pi/180)) : 
-            score += 20
+            score += 15
+
+        if (not math.tan(math.pi / 12)) <= abs((m1 + m2 + m3)/3) <= (math.tan(25*math.pi/180)) :
+            errors['ls'] = self.sideUp['ls']
+
         if abs(m1-m2) <= 0.09 :
-            score += 50
+            score += 30
+        else :
+            errors['lh'] = self.sideUp['lh']
+
         if abs(m2-m3) <= 0.09 :
-            score += 50
-        return score >= threshold
+            score += 25
+        else :
+            errors['lk'] = self.sideUp['lk']
+
+        if (score < threshold) : #there must have been errors
+            return {'hasErrors' : True, 'score' : score, 'points' : errors}
+
+        return {'hasErrors' : False, 'score' : score}  
+
+
+    def get_results(self) :
+        return (self.correctSideUP(), self.correctSideDOWN(), self.correctFrontUP(), self.correctFrontDOWN())
+
 
     
-if __name__ == '__main__':    
-    
-    score = Scoring(low_pos)   
-    print(score.correctFrontDOWN())
